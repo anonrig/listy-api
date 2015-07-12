@@ -42,9 +42,9 @@ passport.use(new FacebookTokenStrategy({
 
                 done(null, currentUser);
             })
+        } else {
+            return done(null, user);
         }
-
-        return done(null, user);
     });
 }));
 
