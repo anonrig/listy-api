@@ -15,8 +15,15 @@ router.post('/facebook', passport.authenticate('facebook-token', { scope: ['emai
 });
 
 
-router.get('/me', auth.ensureAuthentication, function(req, res) {
-    res.json(req.user);
+router.get('/me', auth.ensureAuthentication, function(req, res, next) {
+    Account.find({ accepted: false, accepted_date: {"$lt": req.user._id.getTimestamp()} }).exec(function(err, result) {
+        if (err) return next(err);
+
+        res.json({
+            'facebook': req.user.facebook,
+            'line': result.length - 1 || 0
+        });
+    });
 });
 
 module.exports = router;

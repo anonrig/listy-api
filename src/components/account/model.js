@@ -14,7 +14,9 @@ var AccountSchema = new mongoose.Schema({
         id: { type: String },
         access_token: { type: String, unique: true },
         photo: { type: String }
-    }
+    },
+    accepted: { type: Boolean, default: false },
+    accepted_date: { type: Date, default: Date.now() }
 });
 
 /**
