@@ -4,7 +4,6 @@ var APIError = require('listy/lib/error'),
     jwt = require('jsonwebtoken');
 
 
-
 /**
  * Ensure user is authenticated.
  *
@@ -15,10 +14,10 @@ var APIError = require('listy/lib/error'),
  * @returns {*}
  */
 exports.ensureAuthentication = function(req, res, next) {
-    if (!req.headers.token)
+    if (!req.headers.authorization)
         return next(new APIError('not authorized', 401));
 
-    var userId = jwt.verify(req.headers.token, config.get('jwt-secret'))
+    var userId = jwt.verify(req.headers.authorization.split(' ')[1], config.get('jwt-secret'))
     Account.findById(userId).exec(function(err, user) {
         if (err) return next(err);
 
