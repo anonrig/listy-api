@@ -22,7 +22,7 @@ var express = require('express'),
 passport.use(new FacebookTokenStrategy({
     clientID: config.get('facebook:id'),
     clientSecret: config.get('facebook:secret'),
-    profileFields: ['id', 'photos', 'emails']
+    profileFields: ['id', 'photos', 'emails', 'displayName', 'name', 'gender']
 }, function(accessToken, refreshToken, profile, done) {
     Account.findOne({ 'facebook.id': profile.id }, function(err, user) {
         if (err) return done(err);
@@ -30,7 +30,7 @@ passport.use(new FacebookTokenStrategy({
         if (!user) {
             var currentUser = new Account({
                 provider: 'facebook',
-                email: profile.emails[0].value || 'unknown',
+                email: profile.emails[0].value,
                 facebook: {
                     id: profile.id,
                     access_token: accessToken,
