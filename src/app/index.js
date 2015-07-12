@@ -21,10 +21,9 @@ var express = require('express'),
 
 passport.use(new FacebookTokenStrategy({
     clientID: config.get('facebook:id'),
-    clientSecret: config.get('facebook:secret')
+    clientSecret: config.get('facebook:secret'),
+    profileFields: ['id', 'photos', 'emails']
 }, function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
-    console.log(accessToken);
     Account.findOne({ 'facebook.id': profile.id }, function(err, user) {
         if (err) return done(err);
 
