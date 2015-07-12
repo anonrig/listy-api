@@ -1,5 +1,8 @@
 var APIError = require('listy/lib/error'),
-    config = require('listy/config');
+    config = require('listy/config'),
+    Account = require('listy/components/account/model'),
+    jwt = require('jsonwebtoken');
+
 
 
 /**
@@ -12,8 +15,15 @@ var APIError = require('listy/lib/error'),
  * @returns {*}
  */
 exports.ensureAuthentication = function(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
+    if (!req.headers.token)
+        return next(new APIError('not authorized', 401));
 
-    next(new APIError('not authorized', 401));
+    var userId = jwt.verify(req.headers.token, config.get('jwt-secret'))
+    Account.findById(userId).exec(function(err, user) {
+        if (err) return next(err);
+
+        req.user = user;
+
+        return next();
+    });
 };

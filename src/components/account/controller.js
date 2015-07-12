@@ -1,17 +1,21 @@
 var router = require('express').Router(),
     APIError = require('listy/lib/error'),
     passport = require('passport'),
-    auth = require('listy/lib/auth');
+    config = require('listy/config'),
+    auth = require('listy/lib/auth'),
+    jwt = require('jsonwebtoken');
 
 var Account = require('./model');
 
 
 router.post('/facebook', passport.authenticate('facebook-token', { scope: ['email'] }), function(req, res) {
-    res.json(req.user);
+    res.json({
+        token: jwt.sign(req.user.id, config.get('jwt-secret'))
+    });
 });
 
 
-router.get('/me', passport.authenticate('facebook-token'), function(req, res) {
+router.get('/me', auth.ensureAuthentication, function(req, res) {
     res.json(req.user);
 });
 
